@@ -111,7 +111,7 @@
 
     const { lat, lng } = d.venue;
     $('#mapGoogle').href = d.venue.mapsUrl || `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-    $('#mapYandex').href = `https://yandex.uz/maps/?rtext=~${lat},${lng}&rtt=auto`;
+    $('#mapYandex').href = d.venue.yandexUrl || `https://yandex.uz/maps/?rtext=~${lat},${lng}&rtt=auto`;
     const mapLang = LANG === 'uz' ? 'ru' : LANG;
     const mapSrc = `https://maps.google.com/maps?q=${lat},${lng}&z=16&hl=${mapLang}&output=embed`;
     if ($('#mapFrame').getAttribute('src') !== mapSrc) $('#mapFrame').src = mapSrc;
@@ -137,11 +137,11 @@
   }
 
   function renderContacts(c) {
-    const on = DATA.settings.showContacts !== false && c && (c.phone || c.telegram || c.whatsapp);
+    const on = DATA.settings.showContacts !== false && c && (c.phone || c.telegram);
     $('#contacts').hidden = !on;
     if (!on) return;
 
-    const phone = $('#cPhone'), tg = $('#cTg'), wa = $('#cWa');
+    const phone = $('#cPhone'), tg = $('#cTg');
 
     phone.hidden = !c.phone;
     if (c.phone) {
@@ -156,11 +156,6 @@
       $('#cTgVal').textContent = '@' + user;
     }
 
-    wa.hidden = !c.whatsapp;
-    if (c.whatsapp) {
-      wa.href = `https://wa.me/${digits(c.whatsapp)}`;
-      $('#cWaVal').textContent = fmtPhone(c.whatsapp);
-    }
   }
 
   function setImg(sel, src) {
@@ -409,7 +404,6 @@
       const text = t('share.text');
       const kind = b.dataset.share;
       if (kind === 'telegram') open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
-      else if (kind === 'whatsapp') open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`, '_blank');
       else {
         try { await navigator.clipboard.writeText(url); } catch {}
         b.classList.add('is-done');
